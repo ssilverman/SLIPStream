@@ -164,7 +164,7 @@ bool SLIPStream::writeByte(uint8_t b) {
 }
 
 int SLIPStream::available() {
-  if (stream_.available() == 0) {
+  if (stream_.available() <= 0) {
     return 0;
   }
   if (peek() >= 0) {
