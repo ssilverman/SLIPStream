@@ -1,0 +1,19 @@
+{
+  "name": "TeensyDMX",
+  "description": "A SLIP library that decorates Stream objects. This implements RFC 1055.",
+  "keywords": "slip",
+  "authors": {
+    "name": "Shawn Silverman",
+    "email": "shawn@pobox.com",
+    "maintainer": true
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ssilverman/SLIPStream"
+  },
+  "version": "0.1.0",
+  "license": "BSD-3-Clause-Clear",
+  "homepage": "https://github.com/ssilverman/SLIPStream",
+  "frameworks": "arduino",
+  "platforms": "*"
+}
