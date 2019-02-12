@@ -18,6 +18,11 @@
 class SLIPStream : public Stream {
  public:
   // Creates a new SLIPStream object and uses the given write buffer size.
+  //
+  // The write buffer size should ideally be twice the number of desired
+  // characters because there's a chance, depending on value, that one byte is
+  // written out as two bytes to the underlying stream. If it is specified as
+  // less than two bytes then it will be set to two bytes.
   SLIPStream(Stream &stream, size_t writeBufSize);
 
   virtual ~SLIPStream();
@@ -85,7 +90,7 @@ class SLIPStream : public Stream {
 
   Stream &stream_;
 
-  // For writing
+  // Write buffer
   size_t bufSize_;
   uint8_t *buf_;
   size_t bufIndex_;
