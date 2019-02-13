@@ -44,9 +44,12 @@ size_t SLIPStream::write(uint8_t b) {
 
 size_t SLIPStream::writeEnd() {
   size_t written = stream_.write(END);
-  if (stream_.getWriteError() || written < 1) {
+  if (written < 1) {
     setWriteError();
     return 0;
+  }
+  if (stream_.getWriteError()) {
+    setWriteError();
   }
   return 1;
 }
