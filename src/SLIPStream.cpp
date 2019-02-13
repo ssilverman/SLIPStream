@@ -74,7 +74,11 @@ size_t SLIPStream::writeByte(uint8_t b) {
       written += stream_.write(ESC_ESC);
       break;
     default:
-      return stream_.write(b);
+      if (stream_.write(b) < 1) {
+        setWriteError();
+        return 0;
+      }
+      return 1;
   }
 
   if (written < 2) {
