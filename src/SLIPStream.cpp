@@ -95,7 +95,8 @@ int SLIPStream::available() {
   if (stream_.available() <= 0) {
     return 0;
   }
-  if (peek() >= 0) {
+  int avail = peek();
+  if (avail >= 0 || avail == -2) {
     return 1;
   }
   return 0;

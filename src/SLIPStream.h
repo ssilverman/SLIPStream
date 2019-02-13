@@ -50,7 +50,9 @@ class SLIPStream : public Stream {
   void flush() override;
 
   // This will return a maximum of 1, currently, but this may change if read
-  // buffering is ever implemented.
+  // buffering is ever implemented. More bytes may actually be available.
+  //
+  // Note that a frame END marker is considered an available byte.
   int available() override;
 
   // Reads one character from the SLIP stream. All unknown escaped characters
