@@ -16,34 +16,17 @@ static constexpr uint8_t ESC     = 0xdb;  // 0333
 static constexpr uint8_t ESC_END = 0xdc;  // 0334
 static constexpr uint8_t ESC_ESC = 0xdd;  // 0335
 
-SLIPStream::SLIPStream(Stream &stream, size_t writeBufSize)
+SLIPStream::SLIPStream(Stream &stream)
     : stream_(stream),
-      bufIndex_(0),
       inESC_(false),
-      isEND_(false) {
-  if (writeBufSize < 2) {
-    writeBufSize = 2;
-  }
-  bufSize_ = writeBufSize;
-  buf_ = new uint8_t[writeBufSize];
-}
-
-SLIPStream::~SLIPStream() {
-  if (buf_ != nullptr) {
-    delete[] buf_;
-  }
-}
+      isEND_(false) {}
 
 int SLIPStream::availableForWrite() {
-  // Assume each byte takes up two slots in the buffer
-  return (bufSize_ - bufIndex_)/2;
+  // Assume each byte takes up two slots
+  return stream_.availableForWrite() / 2;
 }
 
 size_t SLIPStream::write(const uint8_t *b, size_t size) {
-  if (getWriteError() != 0) {
-    return 0;
-  }
-
   size_t initialSize = size;
   while (size > 0) {
     if (writeByte(*b) == 0) {
@@ -56,110 +39,47 @@ size_t SLIPStream::write(const uint8_t *b, size_t size) {
 }
 
 size_t SLIPStream::write(uint8_t b) {
-  if (getWriteError() != 0) {
-    return 0;
-  }
   return writeByte(b);
 }
 
 size_t SLIPStream::writeEnd() {
-  if (getWriteError() != 0) {
+  size_t written = stream_.write(END);
+  if (stream_.getWriteError() || written < 1) {
+    setWriteError();
     return 0;
   }
-
-  // Write any remaining characters first
-  if (bufIndex_ >= bufSize_) {
-    if (!writeBuf()) {
-      return 0;
-    }
-  }
-  buf_[bufIndex_++] = END;
   return 1;
 }
 
 void SLIPStream::flush() {
-  if (getWriteError() != 0) {
-    return;
+  stream_.flush();
+  if (stream_.getWriteError() != 0) {
+    setWriteError();
   }
-  if (writeBuf()) {
-    stream_.flush();
-  }
-}
-
-bool SLIPStream::writeBuf() {
-  if (bufIndex_ == 0) {
-    return true;
-  }
-
-  // Write as many bytes as we can
-  const uint8_t *b = buf_;
-  size_t size = bufIndex_;
-  while (size > 0) {
-    size_t written = stream_.write(b, size);
-
-    // Use any existing error
-    int writeErr = stream_.getWriteError();
-    if (writeErr != 0) {
-      // Set a write error because this was a short write, but keep any write
-      // error that was set
-      setWriteError(writeErr);
-      break;
-    }
-
-    // Avoid an infinite loop and treat all short writes as an error
-    if (written < 1) {
-      setWriteError();
-      break;
-    }
-
-    size -= written;
-    b += written;
-  }
-
-  size_t written = bufIndex_ - size;
-
-  if (written >= bufIndex_) {
-    bufIndex_ = 0;
-    return true;
-  }
-
-  // If we've written nothing then no need to shift the buffer
-  if (written > 0) {
-    size_t diff = bufIndex_ - written;
-    memmove(buf_, &buf_[written], diff);
-    bufIndex_ = diff;
-  }
-  return false;
 }
 
 // Writes a byte to the buffer.
 size_t SLIPStream::writeByte(uint8_t b) {
+  size_t written = 0;
   switch (b) {
     case END:
-      if (bufIndex_ >= bufSize_ - 1) {
-        if (!writeBuf()) {
-          return false;
-        }
-      }
-      buf_[bufIndex_++] = ESC;
-      buf_[bufIndex_++] = ESC_END;
+      written += stream_.write(ESC);
+      written += stream_.write(ESC_END);
       break;
     case ESC:
-      if (bufIndex_ >= bufSize_ - 1) {
-        if (!writeBuf()) {
-          return 0;
-        }
-      }
-      buf_[bufIndex_++] = ESC;
-      buf_[bufIndex_++] = ESC_ESC;
+      written += stream_.write(ESC);
+      written += stream_.write(ESC_ESC);
       break;
     default:
-      if (bufIndex_ >= bufSize_) {
-        if (!writeBuf()) {
-          return false;
-        }
-      }
-      buf_[bufIndex_++] = b;
+      return stream_.write(b);
+  }
+
+  if (written < 2) {
+    setWriteError();
+    return 0;
+  }
+  if (stream_.getWriteError() != 0) {
+    setWriteError();
   }
   return 1;
 }

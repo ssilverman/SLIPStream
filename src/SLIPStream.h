@@ -17,33 +17,24 @@
 
 class SLIPStream : public Stream {
  public:
-  // Creates a new SLIPStream object and uses the given write buffer size.
-  //
-  // The write buffer size should ideally be twice the number of desired
-  // characters because there's a chance, depending on value, that one byte is
-  // written out as two bytes to the underlying stream. If it is specified as
-  // less than two bytes then it will be set to two bytes.
-  SLIPStream(Stream &stream, size_t writeBufSize);
+  // Creates a new SLIPStream object.
+  SLIPStream(Stream &stream);
 
-  virtual ~SLIPStream();
+  virtual ~SLIPStream() = default;
 
-  // Returns how many bytes can be written without blocking. Internally, this
-  // assumes that each byte will be written as two, so this returns half the
-  // remaining buffer size.
+  // Returns the number of bytes that can be written without blocking.
+  // Internally, this assumes that each byte will be written as two, so this
+  // returns half the underlying stream's non-blocking write size.
   int availableForWrite() override;
 
   // Writes a range of bytes. This may not write all the bytes if there was a
-  // write error or if the underlying stream's write call returns zero. If this
-  // is the case then a write error will be set. This will return, however, the
-  // actual number of bytes written.
-  //
-  // This returns zero if there is already a write error set.
+  // write error or if the underlying stream was unable to write all the bytes.
+  // If this is the case then a write error will be set. This will return,
+  // however, the actual number of bytes written.
   size_t write(const uint8_t *b, size_t size) override;
 
   // Writes a single byte. This returns 1 if there was no error, otherwise this
   // returns zero. If this returns zero then a write error will be set.
-  //
-  // This returns zero if there is already a write error set.
   size_t write(uint8_t b) override;
 
   // Writes a frame END marker. This behaves the same as the single-byte write.
@@ -80,26 +71,14 @@ class SLIPStream : public Stream {
   int peek() override;
 
  private:
-  // Writes out the complete buffer to the underlying stream. If there was a
-  // short write then this shifts the buffer data. This returns whether the
-  // write was successful.
+  // Encodes and writes an encoded byte to the underlying stream. This returns
+  // whether the write was successful, 1 for success and 0 for no success.
   //
-  // If ever a caller resets the write error, then the bytes remaining in the
-  // buffer will still be correct. This is the reason for shifting any
-  // unwritten bytes.
-  bool writeBuf();
-
-  // Encodes and writes a single byte to the buffer without first checking
-  // whether there's been a write error. This returns whether the write was
-  // successful, 1 for success and 0 for no success.
+  // If the write was not successful or if the underlying stream has a write
+  // error then this stream's write error will be set.
   size_t writeByte(uint8_t b);
 
   Stream &stream_;
-
-  // Write buffer
-  size_t bufSize_;
-  uint8_t *buf_;
-  size_t bufIndex_;
 
   // Character read state.
   bool inESC_;
