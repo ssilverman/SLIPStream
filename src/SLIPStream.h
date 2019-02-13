@@ -12,6 +12,11 @@
 #else
 #include <stddef.h>
 #endif
+#if __has_include(<cstdint>)
+#include <cstdint>
+#else
+#include <stdint.h>
+#endif
 
 // Other includes
 #include <Stream.h>

@@ -3,13 +3,6 @@
 
 #include "SLIPStream.h"
 
-// C++ includes (Arduino doesn't have C++ headers, so check)
-#if __has_include(<cstring>)
-#include <cstring>
-#else
-#include <string.h>
-#endif
-
 // Define SLIP constants.
 static constexpr uint8_t END     = 0xc0;  // 0300
 static constexpr uint8_t ESC     = 0xdb;  // 0333
