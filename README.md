@@ -19,11 +19,19 @@ current frame.
 
 ## Technical notes
 
+### Write errors
+
 If any bytes cannot be written or if the underlying `Stream` object has its
 write error set, then the `SLIPStream` object's write error will be set. In
 fact, if the write error is set, then all write functions (including flush)
 will do nothing.
 
+### Reading
+
+`Stream::readBytes` does not work with this class. This is because:
+1. Without first looking at the data, it is not possible to know what the next
+   character will be, and read buffering is not implemented currently.
+2. There is no way to detect an END using the `Stream` API.
 
 ---
 
