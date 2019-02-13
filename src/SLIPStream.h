@@ -68,6 +68,12 @@ class SLIPStream : public Stream {
   // end-of-frame.
   int read() override;
 
+  // Returns whether the last call to read() returned an END marker. This resets
+  // to false the next time read() is called.
+  bool isEnd() const {
+    return isEND_;
+  }
+
   // Peeks at one character from the SLIP stream. The character determination
   // logic is the same as for read(). This also returns -1 for no data and -2
   // for end-of-frame.
@@ -85,8 +91,8 @@ class SLIPStream : public Stream {
 
   // Encodes and writes a single byte to the buffer without first checking
   // whether there's been a write error. This returns whether the write was
-  // successful.
-  bool writeByte(uint8_t b);
+  // successful, 1 for success and 0 for no success.
+  size_t writeByte(uint8_t b);
 
   Stream &stream_;
 
@@ -97,6 +103,9 @@ class SLIPStream : public Stream {
 
   // Character read state.
   bool inESC_;
+
+  // Indicates whether the last read() call returned an END marker.
+  bool isEND_;
 };
 
 #endif  // SLIPSTREAM_H_

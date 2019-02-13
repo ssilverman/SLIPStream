@@ -19,7 +19,8 @@ static constexpr uint8_t ESC_ESC = 0xdd;  // 0335
 SLIPStream::SLIPStream(Stream &stream, size_t writeBufSize)
     : stream_(stream),
       bufIndex_(0),
-      inESC_(false) {
+      inESC_(false),
+      isEND_(false) {
   if (writeBufSize < 2) {
     writeBufSize = 2;
   }
@@ -45,7 +46,7 @@ size_t SLIPStream::write(const uint8_t *b, size_t size) {
 
   size_t initialSize = size;
   while (size > 0) {
-    if (!writeByte(*b)) {
+    if (writeByte(*b) == 0) {
       break;
     }
     size--;
@@ -58,7 +59,7 @@ size_t SLIPStream::write(uint8_t b) {
   if (getWriteError() != 0) {
     return 0;
   }
-  return writeByte(b) ? 1 : 0;
+  return writeByte(b);
 }
 
 size_t SLIPStream::writeEnd() {
@@ -132,7 +133,7 @@ bool SLIPStream::writeBuf() {
 }
 
 // Writes a byte to the buffer.
-bool SLIPStream::writeByte(uint8_t b) {
+size_t SLIPStream::writeByte(uint8_t b) {
   switch (b) {
     case END:
       if (bufIndex_ >= bufSize_ - 1) {
@@ -146,7 +147,7 @@ bool SLIPStream::writeByte(uint8_t b) {
     case ESC:
       if (bufIndex_ >= bufSize_ - 1) {
         if (!writeBuf()) {
-          return false;
+          return 0;
         }
       }
       buf_[bufIndex_++] = ESC;
@@ -160,7 +161,7 @@ bool SLIPStream::writeByte(uint8_t b) {
       }
       buf_[bufIndex_++] = b;
   }
-  return true;
+  return 1;
 }
 
 int SLIPStream::available() {
@@ -218,6 +219,8 @@ int SLIPStream::peek() {
 }
 
 int SLIPStream::read() {
+  isEND_ = false;
+
   while (stream_.available() > 0) {
     int b = stream_.read();
     switch (b) {
@@ -252,6 +255,7 @@ int SLIPStream::read() {
           inESC_ = false;
           return b;
         } else {
+          isEND_ = true;
           return -2;
         }
       default:
