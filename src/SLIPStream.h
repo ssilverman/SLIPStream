@@ -1,4 +1,5 @@
 // Library for reading and writing SLIP using an underlying Stream object.
+// This implements [RFC 1055](https://tools.ietf.org/html/rfc1055).
 // This file is part of the SLIPStream library.
 // (c) 2018-2019 Shawn Silverman
 
