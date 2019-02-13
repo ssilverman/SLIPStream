@@ -92,14 +92,17 @@ size_t SLIPStream::writeByte(uint8_t b) {
 }
 
 int SLIPStream::available() {
-  if (stream_.available() <= 0) {
+  int avail = stream_.available();
+  if (avail <= 0) {
     return 0;
   }
-  int avail = peek();
-  if (avail >= 0 || avail == -2) {
-    return 1;
+
+  int b = peek();
+  if (b >= 0 || b == -2) {
+    // Guaranteed 1 plus half remaining
+    return 1 + (avail - 1)/2;
   }
-  return 0;
+  return avail/2;
 }
 
 int SLIPStream::peek() {

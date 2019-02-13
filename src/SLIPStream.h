@@ -49,8 +49,9 @@ class SLIPStream : public Stream {
   // This does nothing if there is already a write error set.
   void flush() override;
 
-  // This will return a maximum of 1, currently, but this may change if read
-  // buffering is ever implemented. More bytes may actually be available.
+  // This will return about half the underlying stream's available byte count,
+  // under the conservative assumption that each character potentially occupies
+  // two bytes in its encoded form. More bytes may actually be available.
   //
   // Note that a frame END marker is considered an available byte.
   int available() override;
