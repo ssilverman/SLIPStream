@@ -65,15 +65,12 @@ void SLIPStream::flush() {
 
 // Writes a byte to the buffer.
 size_t SLIPStream::writeByte(uint8_t b) {
-  size_t written = 0;
   switch (b) {
     case END:
-      written += stream_.write(ESC);
-      written += stream_.write(ESC_END);
+      b = ESC_END;
       break;
     case ESC:
-      written += stream_.write(ESC);
-      written += stream_.write(ESC_ESC);
+      b = ESC_ESC;
       break;
     default:
       if (stream_.write(b) == 0) {
@@ -83,7 +80,11 @@ size_t SLIPStream::writeByte(uint8_t b) {
       return 1;
   }
 
-  if (written < 2) {
+  if (stream_.write(ESC) == 0) {
+    setWriteError();
+    return 0;
+  }
+  if (stream_.write(b) == 0) {
     setWriteError();
     return 0;
   }
