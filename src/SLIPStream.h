@@ -89,6 +89,12 @@ class SLIPStream : public Stream {
   // logic is the same as for read(). This also returns -1 for no data and -2
   // for end-of-frame. Corrupt data will not be flagged and will be returned
   // as-is.
+  //
+  // Don't use this function returning -1 as a substitute for determining data
+  // availability. This case may simply mean that the first byte of a two-byte
+  // sequence is available but the whole character is not. If read() is not
+  // called to advance the stream then this will always return -1, even if more
+  // data is available.
   int peek() override;
 
  private:
