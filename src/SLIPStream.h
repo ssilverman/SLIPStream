@@ -25,7 +25,6 @@ class SLIPStream : public Stream {
  public:
   // Read return values
   static constexpr int END_FRAME = -2;
-  static constexpr int BAD_DATA  = -3;
 
   // Creates a new SLIPStream object.
   SLIPStream(Stream &stream);
@@ -66,8 +65,9 @@ class SLIPStream : public Stream {
   // Reads one character from the SLIP stream. All unknown escaped characters
   // are a protocol violation and considered corrupt data.
   //
-  // This will return -1 if there are no bytes available, -2 for end-of-frame,
-  // and -3 for corrupt data.
+  // This will return -1 if there are no bytes available and -2 for
+  // end-of-frame. Corrupt data will be returned as-is, but isBadData() will
+  // return true until the next read() call.
   //
   // The END condition can be tested with isEnd(). For corrupt data, tested with
   // isBadData(), the caller should read until the next END marker.
@@ -86,8 +86,9 @@ class SLIPStream : public Stream {
   }
 
   // Peeks at one character from the SLIP stream. The character determination
-  // logic is the same as for read(). This also returns -1 for no data, -2 for
-  // end-of-frame, and -3 for corrupt data.
+  // logic is the same as for read(). This also returns -1 for no data and -2
+  // for end-of-frame. Corrupt data will not be flagged and will be returned
+  // as-is.
   int peek() override;
 
  private:
