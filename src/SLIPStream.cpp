@@ -12,7 +12,8 @@ static constexpr uint8_t ESC_ESC = 0xdd;  // 0335
 SLIPStream::SLIPStream(Stream &stream)
     : stream_(stream),
       inESC_(false),
-      isEND_(false) {}
+      isEND_(false),
+      isBadData_(false) {}
 
 int SLIPStream::availableForWrite() {
   // Assume each byte takes up two slots
@@ -113,9 +114,7 @@ int SLIPStream::peek() {
   switch (b) {
     case ESC:
       if (inESC_) {
-        // Protocol violation
-        // Choose to return the character
-        return b;
+        return BAD_DATA;
       } else {
         return -1;
       }
@@ -134,16 +133,13 @@ int SLIPStream::peek() {
       }
     case END:
       if (inESC_) {
-        // Protocol violation
-        // Choose to return the character
-        return b;
+        return BAD_DATA;
       } else {
-        return -2;
+        return END_FRAME;
       }
     default:
       if (inESC_) {
-        // Protocol violation
-        // Choose to return the character
+        return BAD_DATA;
       }
       return b;
   }
@@ -158,9 +154,9 @@ int SLIPStream::read() {
       case ESC:
         if (inESC_) {
           // Protocol violation
-          // Choose to return the character
           inESC_ = false;
-          return b;
+          isBadData_ = true;
+          return BAD_DATA;
         } else {
           inESC_ = true;
         }
@@ -182,18 +178,20 @@ int SLIPStream::read() {
       case END:
         if (inESC_) {
           // Protocol violation
-          // Choose to return the character
           inESC_ = false;
-          return b;
+          isBadData_ = true;
+          return BAD_DATA;
         } else {
+          isBadData_ = false;
           isEND_ = true;
-          return -2;
+          return END_FRAME;
         }
       default:
         if (inESC_) {
           // Protocol violation
-          // Choose to return the character
           inESC_ = false;
+          isBadData_ = true;
+          return BAD_DATA;
         }
         return b;
     }
