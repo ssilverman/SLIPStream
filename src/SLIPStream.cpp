@@ -99,7 +99,7 @@ int SLIPStream::available() {
   }
 
   int b = peek();
-  if (b >= 0 || b == -2) {
+  if (b >= 0 || b == END_FRAME) {
     // Guaranteed 1 plus half remaining
     return 1 + (avail - 1)/2;
   }
