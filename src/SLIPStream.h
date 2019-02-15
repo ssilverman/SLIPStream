@@ -50,8 +50,6 @@ class SLIPStream : public Stream {
 
   // Flushes the stream. If there was a write error or if not all the bytes
   // could be sent then a write error will be set.
-  //
-  // This does nothing if there is already a write error set.
   void flush() override;
 
   // This will return about half the underlying stream's available byte count,
