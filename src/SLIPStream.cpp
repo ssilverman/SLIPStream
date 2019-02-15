@@ -41,7 +41,7 @@ size_t SLIPStream::writeEnd() {
     setWriteError();
     return 0;
   }
-  if (stream_.getWriteError()) {
+  if (stream_.getWriteError() != 0) {
     setWriteError();
   }
   return 1;
@@ -70,6 +70,9 @@ size_t SLIPStream::writeByte(uint8_t b) {
       if (stream_.write(b) < 1) {
         setWriteError();
         return 0;
+      }
+      if (stream_.getWriteError() != 0) {
+        setWriteError();
       }
       return 1;
   }
