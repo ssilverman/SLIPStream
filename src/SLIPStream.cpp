@@ -147,6 +147,7 @@ int SLIPStream::peek() {
 
 int SLIPStream::read() {
   isEND_ = false;
+  isBadData_ = false;
 
   while (stream_.available() > 0) {
     int b = stream_.read();
@@ -182,7 +183,6 @@ int SLIPStream::read() {
           isBadData_ = true;
           return BAD_DATA;
         } else {
-          isBadData_ = false;
           isEND_ = true;
           return END_FRAME;
         }

@@ -80,7 +80,7 @@ class SLIPStream : public Stream {
   }
 
   // Returns whether the last call to read() encountered corrupt data. This
-  // remains true until the next END marker is encountered.
+  // resets to false the next time read() is called.
   bool isBadData() const {
     return isBadData_;
   }
