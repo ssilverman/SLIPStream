@@ -81,8 +81,9 @@ class SLIPStream : public Stream {
   // Encodes and writes an encoded byte to the underlying stream. This returns
   // whether the write was successful, 1 for success and 0 for no success.
   //
-  // If the write was not successful or if the underlying stream has a write
-  // error then this stream's write error will be set.
+  // If the write was not successful then this stream's write error will be set.
+  // This does not check if the underlying stream has a write error set, so the
+  // caller will need to check. This avoids a check when doing multi-byte calls.
   size_t writeByte(uint8_t b);
 
   Stream &stream_;
