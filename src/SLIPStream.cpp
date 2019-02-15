@@ -22,7 +22,7 @@ int SLIPStream::availableForWrite() {
 size_t SLIPStream::write(const uint8_t *b, size_t size) {
   size_t initialSize = size;
   while (size > 0) {
-    if (writeByte(*b) < 1) {
+    if (writeByte(*b) == 0) {
       break;
     }
     size--;
@@ -35,7 +35,7 @@ size_t SLIPStream::write(const uint8_t *b, size_t size) {
 }
 
 size_t SLIPStream::write(uint8_t b) {
-  if (writeByte(b) < 1) {
+  if (writeByte(b) == 0) {
     setWriteError();
     return 0;
   }
@@ -46,7 +46,7 @@ size_t SLIPStream::write(uint8_t b) {
 }
 
 size_t SLIPStream::writeEnd() {
-  if (stream_.write(END) < 1) {
+  if (stream_.write(END) == 0) {
     setWriteError();
     return 0;
   }
@@ -76,7 +76,7 @@ size_t SLIPStream::writeByte(uint8_t b) {
       written += stream_.write(ESC_ESC);
       break;
     default:
-      if (stream_.write(b) < 1) {
+      if (stream_.write(b) == 0) {
         setWriteError();
         return 0;
       }
