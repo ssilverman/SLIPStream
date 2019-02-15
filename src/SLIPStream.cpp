@@ -116,29 +116,24 @@ int SLIPStream::peek() {
       if (inESC_) {
         // Protocol violation
         return b;
-      } else {
-        return -1;
       }
-      break;
+      return -1;
     case ESC_END:
       if (inESC_) {
         return END;
-      } else {
-        return ESC_END;
       }
+      return ESC_END;
     case ESC_ESC:
       if (inESC_) {
         return ESC;
-      } else {
-        return ESC_ESC;
       }
+      return ESC_ESC;
     case END:
       if (inESC_) {
         // Protocol violation
         return b;
-      } else {
-        return END_FRAME;
       }
+      return END_FRAME;
     default:
       if (inESC_) {
         // Protocol violation
@@ -160,34 +155,30 @@ int SLIPStream::read() {
           inESC_ = false;
           isBadData_ = true;
           return b;
-        } else {
-          inESC_ = true;
         }
+        inESC_ = true;
         break;
       case ESC_END:
         if (inESC_) {
           inESC_ = false;
           return END;
-        } else {
-          return ESC_END;
         }
+        return ESC_END;
       case ESC_ESC:
         if (inESC_) {
           inESC_ = false;
           return ESC;
-        } else {
-          return ESC_ESC;
         }
+        return ESC_ESC;
       case END:
         if (inESC_) {
           // Protocol violation
           inESC_ = false;
           isBadData_ = true;
           return b;
-        } else {
-          isEND_ = true;
-          return END_FRAME;
         }
+        isEND_ = true;
+        return END_FRAME;
       default:
         if (inESC_) {
           // Protocol violation
