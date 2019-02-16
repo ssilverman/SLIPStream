@@ -73,6 +73,12 @@ class SLIPStream : public Stream {
   // isBadData(), the caller should read until the next END marker.
   int read() override;
 
+  // Implements a multi-byte read and is designed as a replacement for
+  // `readBytes`. Reading stops under the same conditions that read() stops, and
+  // in addition, stops when corrupt data is encountered. Thus, both the isEnd()
+  // and isBadData() functions work as expected.
+  size_t read(uint8_t *buf, size_t len);
+
   // Returns whether the last call to read() returned an END marker. This resets
   // to false the next time read() is called.
   bool isEnd() const {

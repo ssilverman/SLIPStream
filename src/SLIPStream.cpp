@@ -190,3 +190,19 @@ int SLIPStream::read() {
   }
   return -1;
 }
+
+size_t SLIPStream::read(uint8_t *buf, size_t len) {
+  size_t startLen = len;
+  while (len > 0) {
+    int c = read();
+    if (c < 0) {
+      break;
+    }
+    *(buf++) = c;
+    len--;
+    if (isBadData_) {
+      break;
+    }
+  }
+  return startLen - len;
+}
