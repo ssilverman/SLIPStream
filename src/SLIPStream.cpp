@@ -20,14 +20,14 @@ int SLIPStream::availableForWrite() {
   return stream_.availableForWrite() / 2;
 }
 
-size_t SLIPStream::write(const uint8_t *b, size_t size) {
+size_t SLIPStream::write(const uint8_t *buf, size_t size) {
   size_t initialSize = size;
   while (size > 0) {
-    if (writeByte(*b) == 0) {
+    if (writeByte(*buf) == 0) {
       break;
     }
     size--;
-    b++;
+    buf++;
   }
   if (stream_.getWriteError() != 0) {
     setWriteError();

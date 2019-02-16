@@ -40,7 +40,7 @@ class SLIPStream : public Stream {
   // write error or if the underlying stream was unable to write all the bytes.
   // If this is the case then a write error will be set. This will return,
   // however, the actual number of bytes written.
-  size_t write(const uint8_t *b, size_t size) override;
+  size_t write(const uint8_t *buf, size_t size) override;
 
   // Writes a single byte. This returns 1 if there was no error, otherwise this
   // returns zero. If this returns zero then a write error will be set.
