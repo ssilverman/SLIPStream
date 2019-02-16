@@ -112,33 +112,23 @@ int SLIPStream::peek() {
   if (b < 0) {
     return b;
   }
+  if (inESC_) {
+    switch (b) {
+      case ESC_END:
+        return END;
+      case ESC_ESC:
+        return ESC;
+      default:
+        // Protocol violation
+        return b;
+    }
+  }
   switch (b) {
     case ESC:
-      if (inESC_) {
-        // Protocol violation
-        return b;
-      }
       return -1;
-    case ESC_END:
-      if (inESC_) {
-        return END;
-      }
-      return ESC_END;
-    case ESC_ESC:
-      if (inESC_) {
-        return ESC;
-      }
-      return ESC_ESC;
     case END:
-      if (inESC_) {
-        // Protocol violation
-        return b;
-      }
       return END_FRAME;
     default:
-      if (inESC_) {
-        // Protocol violation
-      }
       return b;
   }
 }
@@ -149,43 +139,27 @@ int SLIPStream::read() {
 
   while (stream_.available() > 0) {
     int b = stream_.read();
+    if (inESC_) {
+      inESC_ = false;
+      switch (b) {
+        case ESC_END:
+          return END;
+        case ESC_ESC:
+          return ESC;
+        default:
+          // Protocol violation
+          isBadData_ = true;
+          return b;
+      }
+    }
     switch (b) {
       case ESC:
-        if (inESC_) {
-          // Protocol violation
-          inESC_ = false;
-          isBadData_ = true;
-          return b;
-        }
         inESC_ = true;
         break;
-      case ESC_END:
-        if (inESC_) {
-          inESC_ = false;
-          return END;
-        }
-        return ESC_END;
-      case ESC_ESC:
-        if (inESC_) {
-          inESC_ = false;
-          return ESC;
-        }
-        return ESC_ESC;
       case END:
-        if (inESC_) {
-          // Protocol violation
-          inESC_ = false;
-          isBadData_ = true;
-          return b;
-        }
         isEND_ = true;
         return END_FRAME;
       default:
-        if (inESC_) {
-          // Protocol violation
-          inESC_ = false;
-          isBadData_ = true;
-        }
         return b;
     }
   }
