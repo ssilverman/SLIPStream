@@ -80,6 +80,11 @@ class SLIPStream : public Stream {
   // in addition, stops when corrupt data is encountered. Thus, both the isEnd()
   // and isBadData() functions work as expected.
   //
+  // Note that because corrupt data is part of the read count, it is possible
+  // that the returned value is equal to len even though the last byte is
+  // corrupt. Thus, this case can't be used to verify that there hasn't been any
+  // corrupt data.
+  //
   // It is assumed that buf is not nullptr and that it has enough space to store
   // all the requested bytes.
   size_t read(uint8_t *buf, size_t len);
@@ -117,6 +122,7 @@ class SLIPStream : public Stream {
   // caller will need to check. This avoids a check when doing multi-byte calls.
   size_t writeByte(uint8_t b);
 
+  // The underlying stream.
   Stream &stream_;
 
   // Character read state.
