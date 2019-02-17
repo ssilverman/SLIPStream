@@ -40,6 +40,8 @@ class SLIPStream : public Stream {
   // write error or if the underlying stream was unable to write all the bytes.
   // If this is the case then a write error will be set. This will return,
   // however, the actual number of bytes written.
+  //
+  // It is assumed that buf is not nullptr and is at least as large as size.
   size_t write(const uint8_t *buf, size_t size) override;
 
   // Writes a single byte. This returns 1 if there was no error, otherwise this
@@ -77,6 +79,9 @@ class SLIPStream : public Stream {
   // `readBytes`. Reading stops under the same conditions that read() stops, and
   // in addition, stops when corrupt data is encountered. Thus, both the isEnd()
   // and isBadData() functions work as expected.
+  //
+  // It is assumed that buf is not nullptr and that it has enough space to store
+  // all the requested bytes.
   size_t read(uint8_t *buf, size_t len);
 
   // Returns whether the last call to read() returned an END marker. This resets
