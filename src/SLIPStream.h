@@ -29,6 +29,10 @@ class SLIPStream : public Stream {
   // Creates a new SLIPStream object.
   SLIPStream(Stream &stream);
 
+  // Not copyable or movable
+  SLIPStream(const SLIPStream &) = delete;
+  SLIPStream &operator=(const SLIPStream &) = delete;
+
   virtual ~SLIPStream() = default;
 
   // Returns the number of bytes that can be written without blocking.
