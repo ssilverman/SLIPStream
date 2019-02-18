@@ -27,9 +27,11 @@ class SLIPStream : public Stream {
   static constexpr int END_FRAME = -2;
 
   // Creates a new SLIPStream object.
-  SLIPStream(Stream &stream);
+  // https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#Rc-explicit
+  explicit SLIPStream(Stream &stream);
 
   // Not copyable or movable
+  // https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#Rc-copy-virtual
   SLIPStream(const SLIPStream &) = delete;
   SLIPStream &operator=(const SLIPStream &) = delete;
 
