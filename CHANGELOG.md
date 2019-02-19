@@ -2,7 +2,7 @@
 
 This document details the changes between each release.
 
-## [0.1.0]
+## [1.0.0]
 
 Initial public release.
 
