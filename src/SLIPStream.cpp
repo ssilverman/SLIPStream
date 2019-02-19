@@ -15,10 +15,13 @@ SLIPStream::SLIPStream(Stream &stream)
       isEND_(false),
       isBadData_(false) {}
 
+#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32) && \
+    !defined(ARDUINO_ARCH_STM32)
 int SLIPStream::availableForWrite() {
   // Assume each byte takes up two slots
   return stream_.availableForWrite() / 2;
 }
+#endif
 
 size_t SLIPStream::write(const uint8_t *buf, size_t size) {
   size_t startSize = size;

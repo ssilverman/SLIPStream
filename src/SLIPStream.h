@@ -7,6 +7,10 @@
 #define SLIPSTREAM_H_
 
 // C++ includes (Arduino doesn't have C++ headers, so check)
+#if defined(ESP8266)  // No __has_include here
+#include <cstddef>
+#include <cstdint>
+#else
 #if __has_include(<cstddef>)
 #include <cstddef>
 #else
@@ -16,6 +20,7 @@
 #include <cstdint>
 #else
 #include <stdint.h>
+#endif
 #endif
 
 // Other includes
@@ -37,10 +42,13 @@ class SLIPStream : public Stream {
 
   virtual ~SLIPStream() = default;
 
+#if !defined(ARDUINO_ARCH_ESP8266) && !defined(ARDUINO_ARCH_ESP32) && \
+    !defined(ARDUINO_ARCH_STM32)
   // Returns the number of bytes that can be written without blocking.
   // Internally, this assumes that each byte will be written as two, so this
   // returns half the underlying stream's non-blocking write size.
   int availableForWrite() override;
+#endif
 
   // Writes a range of bytes. This may not write all the bytes if there was a
   // write error or if the underlying stream was unable to write all the bytes.
