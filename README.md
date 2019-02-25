@@ -1,4 +1,4 @@
-# Readme for SLIPStream v1.0.0
+# Readme for SLIPStream v1.0.1
 
 This is a library for sending and receiving SLIP using any object that
 implements `Stream`. It implements
