@@ -1,5 +1,5 @@
-.pio
-.pioenvs
-.piolibdeps
+.pio/
+.pioenvs/
+.piolibdeps/
 .vscode/
 .DS_Store
