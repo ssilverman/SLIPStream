@@ -2,6 +2,11 @@
 
 This document details the changes between each release.
 
+## [1.0.2]
+
+### Fixed
+* Fixed the build for ESP8266 platforms.
+
 ## [1.0.1]
 
 ### Added
@@ -16,4 +21,4 @@ Initial public release.
 
 ---
 
-Copyright (c) 2018-2019 Shawn Silverman
+Copyright (c) 2018-2023 Shawn Silverman
