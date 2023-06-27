@@ -1,5 +1,7 @@
+// SPDX-FileCopyrightText: (c) 2018-2023 Shawn Silverman <shawn@pobox.com>
+// SPDX-License-Identifier: BSD-3-Clause-Clear
+
 // This file is part of the SLIPStream library.
-// (c) 2018-2023 Shawn Silverman
 
 #include "SLIPStream.h"
 

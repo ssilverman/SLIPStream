@@ -1,7 +1,9 @@
+// SPDX-FileCopyrightText: (c) 2018-2023 Shawn Silverman <shawn@pobox.com>
+// SPDX-License-Identifier: BSD-3-Clause-Clear
+
 // Library for reading and writing SLIP using an underlying Stream object.
 // This implements [RFC 1055](https://tools.ietf.org/html/rfc1055).
 // This file is part of the SLIPStream library.
-// (c) 2018-2023 Shawn Silverman
 
 #ifndef SLIPSTREAM_H_
 #define SLIPSTREAM_H_
