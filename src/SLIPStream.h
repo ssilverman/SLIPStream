@@ -103,11 +103,11 @@ class SLIPStream : public Stream {
   //
   // It is assumed that buf is not nullptr and that it has enough space to store
   // all the requested bytes.
-#if defined(ESP8266)
+#if defined(ARDUINO_ARCH_ESP8266)
   int read(uint8_t *buf, size_t len) override;
 #else
   size_t read(uint8_t *buf, size_t len);
-#endif  // ESP8266
+#endif  // ARDUINO_ARCH_ESP8266
 
   // Returns whether the last call to read() returned an END marker. This resets
   // to false the next time read() is called.

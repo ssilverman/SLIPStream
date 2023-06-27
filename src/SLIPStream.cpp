@@ -171,11 +171,11 @@ int SLIPStream::read() {
   return -1;
 }
 
-#if defined(ESP8266)
+#if defined(ARDUINO_ARCH_ESP8266)
 int SLIPStream::read(uint8_t *buf, size_t len) {
 #else
 size_t SLIPStream::read(uint8_t *buf, size_t len) {
-#endif  // ESP8266
+#endif  // ARDUINO_ARCH_ESP8266
   size_t startLen = len;
   while (len > 0) {
     int c = read();
