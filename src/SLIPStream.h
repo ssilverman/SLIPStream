@@ -1,7 +1,7 @@
 // Library for reading and writing SLIP using an underlying Stream object.
 // This implements [RFC 1055](https://tools.ietf.org/html/rfc1055).
 // This file is part of the SLIPStream library.
-// (c) 2018-2019 Shawn Silverman
+// (c) 2018-2023 Shawn Silverman
 
 #ifndef SLIPSTREAM_H_
 #define SLIPSTREAM_H_
@@ -101,7 +101,11 @@ class SLIPStream : public Stream {
   //
   // It is assumed that buf is not nullptr and that it has enough space to store
   // all the requested bytes.
+#if defined(ESP8266)
+  int read(uint8_t *buf, size_t len);
+#else
   size_t read(uint8_t *buf, size_t len);
+#endif  // ESP8266
 
   // Returns whether the last call to read() returned an END marker. This resets
   // to false the next time read() is called.
