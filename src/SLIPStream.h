@@ -102,7 +102,7 @@ class SLIPStream : public Stream {
   // It is assumed that buf is not nullptr and that it has enough space to store
   // all the requested bytes.
 #if defined(ESP8266)
-  int read(uint8_t *buf, size_t len);
+  int read(uint8_t *buf, size_t len) override;
 #else
   size_t read(uint8_t *buf, size_t len);
 #endif  // ESP8266
